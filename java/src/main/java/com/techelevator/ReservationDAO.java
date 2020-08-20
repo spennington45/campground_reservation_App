@@ -7,7 +7,7 @@ public interface ReservationDAO {
 
 	public void bookReservation(long siteId, LocalDate to, LocalDate from, String name);
 	public void confirmationId (long reservationId);
-	public List<Reservation> getAllReservations();
+	public List<Reservation> getAllReservations(long campId);
 	
 	
 }
