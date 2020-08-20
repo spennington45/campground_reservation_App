@@ -8,7 +8,6 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import com.techelevator.projects.model.Department;
 import com.techelevator.view.Menu;
 
 public class CampgroundCLI {
@@ -20,6 +19,7 @@ public class CampgroundCLI {
 	private Menu menu = new Menu(System.in, System.out);
 	private static JDBCParkDAO park;
 	private static JDBCCampgroundDAO campground;
+	private static JdcbSiteDAO site;
 	private JdbcTemplate jdbcTemplate;
 	
 	public static void main(String[] args) {
@@ -29,6 +29,7 @@ public class CampgroundCLI {
 		dataSource.setPassword("postgres1");
 		park = new JDBCParkDAO(dataSource);
 		campground = new JDBCCampgroundDAO(dataSource);
+		site = new JdcbSiteDAO(dataSource);
 		PARK_OPTIONS = park.getParkNames().toArray();
 		CampgroundCLI application = new CampgroundCLI(dataSource);
 		application.run();
@@ -42,7 +43,6 @@ public class CampgroundCLI {
 		while (true) {
 			System.out.println("Please select a park you would like to visit.");
 			String choice = (String) menu.getChoiceFromOptions(PARK_OPTIONS);
-
 			if (choice.equals("Acadia")) {
 				campgroundMenu(1);
 			} else if (choice.equals("Arches")) {
@@ -78,17 +78,19 @@ public class CampgroundCLI {
 			campgroundMenu(parkId);
 		} else {
 			String campgroundChoice = (String) menu.getChoiceFromOptions(AVAILABLE_CAMPGROUNDS);
-			String siteIds = "SELECT site.site_id FROM site JOIN campground ON site.campground_id = campground.campground_id "
+			String campgroundId = "SELECT campground_id FROM campground "
 					+ "WHERE campground.name = ?";
-			SqlRowSet results = jdbcTemplate.queryForRowSet(siteIds, campgroundChoice);
+			SqlRowSet results = jdbcTemplate.queryForRowSet(campgroundId, campgroundChoice);
+			long id = 0;
 			while (results.next()) {
-				
+				id = results.getLong("campground_id");
 			}
+			campsiteMenu(id);
 		}
 	}
 	
-	public void campsiteMenu(long siteId) {
-		
+	public void campsiteMenu(long campId) {
+		site.getAvailableSites(campId, to, from);
 	}
 	
 	public void seeAllCampgrounds(long parkId) {
