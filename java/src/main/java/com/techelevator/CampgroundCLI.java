@@ -1,6 +1,9 @@
 package com.techelevator;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.sql.DataSource;
 
@@ -14,6 +17,7 @@ public class CampgroundCLI {
 
 	private static Object[] PARK_OPTIONS;
 	private static Object[] AVAILABLE_CAMPGROUNDS;
+	private static Object[] AVALIABLE_SITES;
 	private static Object[] CAMPGROUND_MENU = {"See all campgrounds.", "See available campgrounds."};
 	private static String [] MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private Menu menu = new Menu(System.in, System.out);
@@ -90,7 +94,52 @@ public class CampgroundCLI {
 	}
 	
 	public void campsiteMenu(long campId) {
-		site.getAvailableSites(campId, to, from);
+		LocalDate from = getStartDate();
+		LocalDate to = getEndDate();
+		List<Site> sites = site.getAvailableSites(campId, to, from);
+		AVALIABLE_SITES = new String [sites.size()]; 
+		for (int i = 0; i < sites.size(); i++) {
+			AVALIABLE_SITES[i] = sites.get(i).toString();
+		}
+		String choice = (String) menu.getChoiceFromOptions(AVALIABLE_SITES);
+	}
+	
+	public LocalDate getStartDate() {
+		LocalDate from = null;
+		try (Scanner scanner = new Scanner(System.in)) {
+			//scanner.useDelimiter(System.lineSeparator());
+			System.out.println("Please enter dates in the following format YYYY-MM-DD seperated by a '-' such as 2020-08-18 ");
+			System.out.print("Enter the date you wish to start camping >>> ");
+			String test = scanner.next();
+			if (!test.equals("q") || !test.equals("Q")) {
+				from = LocalDate.parse(test);
+			} else {
+				run();
+			}
+		} catch (Exception e) {
+			System.out.println("Invaled date please enter a different date or press q to quit");
+			//getStartDate();
+		}
+		return from;
+	}
+	
+	public LocalDate getEndDate() {
+		LocalDate to = null;
+		try (Scanner scanner = new Scanner(System.in)) {
+			//scanner.useDelimiter("\n");
+			System.out.println("Please enter dates in the following format YYYY-MM-DD seperated by a '-' such as 2020-08-18 ");
+			System.out.print("Enter the date you wish to end camping >>> ");
+			String test = scanner.next();
+			if (!test.equals("q") || !test.equals("Q")) {
+				to = LocalDate.parse(test);
+			} else {
+				run();
+			}
+		} catch (Exception e) {
+			System.out.println("Invaled date please enter a different date or press q to quit");
+			//getEndDate();
+		}
+		return to;
 	}
 	
 	public void seeAllCampgrounds(long parkId) {
