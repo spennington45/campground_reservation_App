@@ -1,17 +1,26 @@
 package com.techelevator;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import com.techelevator.projects.model.Department;
 import com.techelevator.view.Menu;
 
 public class CampgroundCLI {
 
 	private static Object[] PARK_OPTIONS;
+	private static Object[] AVAILABLE_CAMPGROUNDS;
+	private static Object[] CAMPGROUND_MENU = {"See all campgrounds.", "See available campgrounds."};
+	private static String [] MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private Menu menu = new Menu(System.in, System.out);
 	private static JDBCParkDAO park;
 	private static JDBCCampgroundDAO campground;
+	private JdbcTemplate jdbcTemplate;
 	
 	public static void main(String[] args) {
 		BasicDataSource dataSource = new BasicDataSource();
@@ -26,7 +35,7 @@ public class CampgroundCLI {
 	}
 
 	public CampgroundCLI(DataSource datasource) {
-		// create your DAOs here
+		jdbcTemplate = new JdbcTemplate(datasource);
 	}
 
 	public void run() {
@@ -35,14 +44,67 @@ public class CampgroundCLI {
 			String choice = (String) menu.getChoiceFromOptions(PARK_OPTIONS);
 
 			if (choice.equals("Acadia")) {
-				campground.getCampgroundByParkId(1);
+				campgroundMenu(1);
 			} else if (choice.equals("Arches")) {
-				campground.getCampgroundByParkId(2);
+				campgroundMenu(2);
 			} else if (choice.equals("Cuyahoga Valley")) {
-				campground.getCampgroundByParkId(3);
+				campgroundMenu(3);
 			} else {
 				System.exit(0);
 			}
 		}
+	}
+	
+	public void campgroundMenu(long parkId) {
+		String choice = (String) menu.getChoiceFromOptions(CAMPGROUND_MENU);
+		if (choice.equals("See all campgrounds.")) {
+			seeAllCampgrounds(parkId);
+		} else if (choice.equals("See available campgrounds.")) {
+			seeAvailableCampgrounds(parkId);
+		}
+	}
+	
+	public void seeAvailableCampgrounds(long parkId) {
+		System.out.println("Which month would you like to start your camping trip?");
+		String from = (String) menu.getChoiceFromOptions(MONTHS);
+		System.out.println("What month would you like to end your camping trip");
+		String to = (String) menu.getChoiceFromOptions(MONTHS);
+		int fromInt = monthToInt(from);
+		int toInt = monthToInt(to);
+		List <String> allAvailableCampgrounds = campground.getAllAvailableCampgroundNames(parkId, fromInt, toInt);
+		AVAILABLE_CAMPGROUNDS = allAvailableCampgrounds.toArray();
+		if (AVAILABLE_CAMPGROUNDS.length == 0) {
+			System.out.println("No available campgrounds for the indicated time. Please pick other months.");
+			campgroundMenu(parkId);
+		} else {
+			String campgroundChoice = (String) menu.getChoiceFromOptions(AVAILABLE_CAMPGROUNDS);
+			String siteIds = "SELECT site.site_id FROM site JOIN campground ON site.campground_id = campground.campground_id "
+					+ "WHERE campground.name = ?";
+			SqlRowSet results = jdbcTemplate.queryForRowSet(siteIds, campgroundChoice);
+			while (results.next()) {
+				
+			}
+		}
+	}
+	
+	public void campsiteMenu(long siteId) {
+		
+	}
+	
+	public void seeAllCampgrounds(long parkId) {
+		List <String> allCampgrounds = campground.getAllCampgroundNames(parkId);
+		for (String i : allCampgrounds) {
+			System.out.println(i);
+		}
+	}
+	
+	public int monthToInt(String month) {
+		int output = 0;
+		for (int i = 0; i < MONTHS.length; i++) {
+			if (MONTHS[i].equals(month)) {
+				output = i + 1;
+			}
+		}
+	return output;
 	}
 }

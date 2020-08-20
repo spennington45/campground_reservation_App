@@ -40,8 +40,7 @@ public class JDBCParkDAO implements ParkDAO {
 	}
 	
 	private Park mapRowToPark(SqlRowSet results) {
-		Park thisPark;
-		thisPark = new Park();
+		Park thisPark = new Park();
 		thisPark.setParkId(results.getLong("park_id"));
 		thisPark.setName(results.getString("name"));
 		thisPark.setLocation(results.getString("location"));
