@@ -52,8 +52,13 @@ public class Reservation {
 	public void setCreateDate(LocalDate createDate) {
 		this.createDate = createDate;
 	}
+	@Override
+	public String toString() {
+		return "Reservation Id = " + reservationId + ", siteId = " + siteId + ", name = " + name + ", from = "
+				+ fromDate + ", to = " + toDate + ", reserved on = " + createDate;
+	}
 	 
-	 
+
 	 
 	 
 }

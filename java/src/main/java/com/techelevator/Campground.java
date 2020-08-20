@@ -1,6 +1,7 @@
 package com.techelevator;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Campground {
 
@@ -45,7 +46,7 @@ public class Campground {
 		return fee;
 	}
 	public void setFee(BigDecimal fee) {
-		this.fee = fee;
+		this.fee = fee.setScale(2, RoundingMode.HALF_UP);
 	}
 
 }
