@@ -48,6 +48,7 @@ public class CampgroundCLI {
 			System.out.println("Please select a park you would like to visit.");
 			String choice = (String) menu.getChoiceFromOptions(PARK_OPTIONS);
 			if (choice.equals("Acadia")) {
+				System.out.println();
 				campgroundMenu(1);
 			} else if (choice.equals("Arches")) {
 				campgroundMenu(2);
@@ -110,7 +111,7 @@ public class CampgroundCLI {
 			//scanner.useDelimiter(System.lineSeparator());
 			System.out.println("Please enter dates in the following format YYYY-MM-DD seperated by a '-' such as 2020-08-18 ");
 			System.out.print("Enter the date you wish to start camping >>> ");
-			String test = scanner.next();
+			String test = scanner.nextLine();
 			if (!test.equals("q") || !test.equals("Q")) {
 				from = LocalDate.parse(test);
 			} else {
@@ -129,7 +130,7 @@ public class CampgroundCLI {
 			//scanner.useDelimiter("\n");
 			System.out.println("Please enter dates in the following format YYYY-MM-DD seperated by a '-' such as 2020-08-18 ");
 			System.out.print("Enter the date you wish to end camping >>> ");
-			String test = scanner.next();
+			String test = scanner.nextLine();
 			if (!test.equals("q") || !test.equals("Q")) {
 				to = LocalDate.parse(test);
 			} else {
