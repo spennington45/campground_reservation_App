@@ -14,16 +14,19 @@ public class JdcbSiteDAO implements SiteDAO{
 	
 	public JdcbSiteDAO(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
+		
 	}
 	
 	
 	@Override
 	public List<Site> getAvailableSites(long campId, LocalDate to, LocalDate from) {
 		ArrayList<Site> sites = new ArrayList<>();
-		String sqlSiteAvail = "SELECT s.site_id, s.campground_id, s.site_number, s.max_occupancy, s.accessible, s.max_rv_length, s.utilities, c.daily_fee FROM site s JOIN reservation r ON s.site_id = r.site_id "
-				+ "JOIN campground c ON c.campground_id = s.campground_id WHERE ('2020-08-14', '2020-08-18') OVERLAPS (DATE '2020-08-14', DATE '2020-08-14') AND s.campground_id = 2 "
-				+ "GROUP BY s.site_id, s.campground_id, c.daily_fee, r.reservation_id LIMIT 5";
-		SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlSiteAvail);
+		String sqlSiteAvail = "SELECT s.site_id, s.campground_id, s.site_number, s.max_occupancy, s.accessible, s.max_rv_length, s.utilities, c.daily_fee "
+				+ "FROM site s JOIN reservation r ON r.site_id = s.site_id JOIN campground c ON c.campground_id = s.campground_id "
+				+ "WHERE s.site_id NOT IN (SELECT r.site_id FROM reservation "
+				+ "WHERE (r.to_date BETWEEN ? AND ?) OR (r.from_date BETWEEN ? AND ?) "
+				+ "OR (r.to_date < ? AND r.from_date > ?)) AND s.campground_id = ? GROUP BY s.site_id,s.campground_id, c.daily_fee LIMIT 5";
+		SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlSiteAvail, from, to, from, to, from, to, campId);
 		while (sqlRowSet.next()) {
 			Site site = addRowToSite(sqlRowSet);
 			sites.add(site);
