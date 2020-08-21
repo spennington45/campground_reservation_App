@@ -65,5 +65,12 @@ public class Site {
 	public void setDailyFee(BigDecimal dailyFee) {
 		this.dailyFee = dailyFee.setScale(2, RoundingMode.HALF_UP);
 	}
+	@Override
+	public String toString() {
+		return "Site umber " + siteNum + ", max occupancy " + maxOccupancy 
+				+ ", max RV Length " + maxRVLength + ", utilities " + utilities + ", daily fee " + dailyFee;
+	}
+	
+	
 	
 }

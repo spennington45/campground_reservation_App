@@ -5,18 +5,18 @@ import java.math.RoundingMode;
 
 public class Campground {
 
-	private long campgroundIdd;
+	private long campgroundId;
 	private long parkId;
 	private String name;
-	private String openFrom;
-	private String openTo;
+	private int openFrom;
+	private int openTo;
 	private BigDecimal fee;
 	
-	public long getCampgroundIdd() {
-		return campgroundIdd;
+	public long getCampgroundId() {
+		return campgroundId;
 	}
-	public void setCampgroundIdd(long campgroundIdd) {
-		this.campgroundIdd = campgroundIdd;
+	public void setCampgroundId(long campgroundIdd) {
+		this.campgroundId = campgroundIdd;
 	}
 	public long getParkId() {
 		return parkId;
@@ -30,16 +30,16 @@ public class Campground {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getOpenFrom() {
+	public int getOpenFrom() {
 		return openFrom;
 	}
-	public void setOpenFrom(String openFrom) {
+	public void setOpenFrom(int openFrom) {
 		this.openFrom = openFrom;
 	}
-	public String getOpenTo() {
+	public int getOpenTo() {
 		return openTo;
 	}
-	public void setOpenTo(String openTo) {
+	public void setOpenTo(int openTo) {
 		this.openTo = openTo;
 	}
 	public BigDecimal getFee() {
