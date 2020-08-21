@@ -4,6 +4,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 import javax.sql.DataSource;
 
@@ -18,12 +19,13 @@ public class CampgroundCLI {
 	private static Object[] PARK_OPTIONS;
 	private static Object[] AVAILABLE_CAMPGROUNDS;
 	private static Object[] AVALIABLE_SITES;
-	private static Object[] CAMPGROUND_MENU = {"See all campgrounds.", "See available campgrounds."};
+	private static Object[] CAMPGROUND_MENU = {"See all campgrounds.", "See available campgrounds.", "Back"};
 	private static String [] MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private Menu menu = new Menu(System.in, System.out);
 	private static JDBCParkDAO park;
 	private static JDBCCampgroundDAO campground;
 	private static JdcbSiteDAO site;
+	private static JdbcReservationsDAO reservation;
 	private JdbcTemplate jdbcTemplate;
 	
 	public static void main(String[] args) {
@@ -34,6 +36,7 @@ public class CampgroundCLI {
 		park = new JDBCParkDAO(dataSource);
 		campground = new JDBCCampgroundDAO(dataSource);
 		site = new JdcbSiteDAO(dataSource);
+		reservation = new JdbcReservationsDAO(dataSource);
 		PARK_OPTIONS = park.getParkNames().toArray();
 		CampgroundCLI application = new CampgroundCLI(dataSource);
 		application.run();
@@ -48,11 +51,13 @@ public class CampgroundCLI {
 			System.out.println("Please select a park you would like to visit.");
 			String choice = (String) menu.getChoiceFromOptions(PARK_OPTIONS);
 			if (choice.equals("Acadia")) {
-				System.out.println();
+				park.desplayParkInfo(1);
 				campgroundMenu(1);
 			} else if (choice.equals("Arches")) {
+				park.desplayParkInfo(2);
 				campgroundMenu(2);
 			} else if (choice.equals("Cuyahoga Valley")) {
+				park.desplayParkInfo(3);
 				campgroundMenu(3);
 			} else {
 				System.exit(0);
@@ -64,6 +69,7 @@ public class CampgroundCLI {
 		String choice = (String) menu.getChoiceFromOptions(CAMPGROUND_MENU);
 		if (choice.equals("See all campgrounds.")) {
 			seeAllCampgrounds(parkId);
+			campgroundMenu(parkId);
 		} else if (choice.equals("See available campgrounds.")) {
 			seeAvailableCampgrounds(parkId);
 		}
@@ -78,7 +84,7 @@ public class CampgroundCLI {
 		int toInt = monthToInt(to);
 		List <String> allAvailableCampgrounds = campground.getAllAvailableCampgroundNames(parkId, fromInt, toInt);
 		AVAILABLE_CAMPGROUNDS = allAvailableCampgrounds.toArray();
-		if (AVAILABLE_CAMPGROUNDS.length == 0) {
+		if (AVAILABLE_CAMPGROUNDS.length == 1) {
 			System.out.println("No available campgrounds for the indicated time. Please pick other months.");
 			campgroundMenu(parkId);
 		} else {
@@ -95,52 +101,72 @@ public class CampgroundCLI {
 	}
 	
 	public void campsiteMenu(long campId) {
-		LocalDate from = getStartDate();
-		LocalDate to = getEndDate();
-		List<Site> sites = site.getAvailableSites(campId, to, from);
-		AVALIABLE_SITES = new String [sites.size()]; 
-		for (int i = 0; i < sites.size(); i++) {
-			AVALIABLE_SITES[i] = sites.get(i).toString();
-		}
-		String choice = (String) menu.getChoiceFromOptions(AVALIABLE_SITES);
-	}
-	
-	public LocalDate getStartDate() {
 		LocalDate from = null;
-		try (Scanner scanner = new Scanner(System.in)) {
-			//scanner.useDelimiter(System.lineSeparator());
-			System.out.println("Please enter dates in the following format YYYY-MM-DD seperated by a '-' such as 2020-08-18 ");
-			System.out.print("Enter the date you wish to start camping >>> ");
-			String test = scanner.nextLine();
-			if (!test.equals("q") || !test.equals("Q")) {
-				from = LocalDate.parse(test);
-			} else {
-				run();
-			}
+		LocalDate to = null;
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Please enter dates in the following format YYYY-MM-DD seperated by a '-' such as 2020-08-18");
+		System.out.print("Enter the date you wish to start camping >>> ");
+		String startDate = scanner.nextLine();
+		System.out.println("Please enter dates in the following format YYYY-MM-DD seperated by a '-' such as 2020-08-18");
+		System.out.print("Enter the date you wish to end camping >>> ");
+		String endDate = scanner.nextLine();
+		System.out.println();
+		try {
+			from = LocalDate.parse(startDate);
+			to = LocalDate.parse(endDate);
 		} catch (Exception e) {
-			System.out.println("Invaled date please enter a different date or press q to quit");
-			//getStartDate();
+			System.out.println("Invaled date please enter a different date");
+			campsiteMenu(campId);
 		}
-		return from;
+		List<Site> sites = site.getAvailableSites(campId, to, from);
+		if (sites.size() > 0) {
+			AVALIABLE_SITES = new String [6]; 
+			for (int i = 0; i < sites.size(); i++) {
+				if (!sites.get(i).toString().equals(null)) {
+					AVALIABLE_SITES[i] = sites.get(i).toString();					
+				}
+			}
+			AVALIABLE_SITES[5] = "Back";
+			System.out.println("Please select an avaliable site to make a reservation.");
+			String choice = (String) menu.getChoiceFromOptions(AVALIABLE_SITES);
+			int index = 0;
+			if (!choice.equals("Back")) {
+				for (int i = 0; i < AVALIABLE_SITES.length; i++) {
+					if (choice.equals(AVALIABLE_SITES[i])) {
+						index = i;
+					}
+				}
+				long siteId = sites.get(index).getSiteId();
+				System.out.print("Please enter a name for the reservation >>> ");
+				String name = scanner.nextLine();
+				reservation.bookReservation(siteId, to, from, name);
+				String res = "SELECT reservation_id FROM reservation ORDER BY reservation_id DESC LIMIT 1";
+				SqlRowSet sql = jdbcTemplate.queryForRowSet(res);
+				long reservationId = 0;
+				while (sql.next()) {
+					reservationId = sql.getLong("reservation_id");
+				}
+				reservation.confirmationId(reservationId);
+			}			
+		} else {
+			System.out.println("No avalable campsites for the dates " + from + " to " + to);
+		}
 	}
 	
-	public LocalDate getEndDate() {
-		LocalDate to = null;
+	public LocalDate getDate() {
+		LocalDate date = null;
 		try (Scanner scanner = new Scanner(System.in)) {
-			//scanner.useDelimiter("\n");
-			System.out.println("Please enter dates in the following format YYYY-MM-DD seperated by a '-' such as 2020-08-18 ");
-			System.out.print("Enter the date you wish to end camping >>> ");
 			String test = scanner.nextLine();
 			if (!test.equals("q") || !test.equals("Q")) {
-				to = LocalDate.parse(test);
+				date = LocalDate.parse(test);
 			} else {
 				run();
 			}
 		} catch (Exception e) {
 			System.out.println("Invaled date please enter a different date or press q to quit");
-			//getEndDate();
+			getDate();
 		}
-		return to;
+		return date;
 	}
 	
 	public void seeAllCampgrounds(long parkId) {

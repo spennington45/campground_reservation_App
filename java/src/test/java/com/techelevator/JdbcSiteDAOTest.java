@@ -2,6 +2,7 @@ package com.techelevator;
 
 import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class JdbcSiteDAOTest {
 	
 	
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	public static void setUpBeforeClass() {
 		System.out.println("Starting test suite");
 		dataSource = new SingleConnectionDataSource();
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/campground");
@@ -41,13 +42,13 @@ public class JdbcSiteDAOTest {
 	}
 
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	public static void tearDownAfterClass() {
 		dataSource.destroy();
 		System.out.println("All tests are done");
 	}
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		System.out.println("Starting test");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		//Lines needed to make a unique campId variable
@@ -57,9 +58,14 @@ public class JdbcSiteDAOTest {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		System.out.println("Ending test");
-		dataSource.getConnection().rollback();
+		try {
+			dataSource.getConnection().rollback();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test

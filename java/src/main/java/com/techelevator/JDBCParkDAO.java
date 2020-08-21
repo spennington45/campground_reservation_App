@@ -39,6 +39,19 @@ public class JDBCParkDAO implements ParkDAO {
 		return names;
 	}
 	
+	public void desplayParkInfo(long parkId) {
+		List<Park> parks = getAllParks();
+		for (Park i : parks) {
+			if (i.getParkId() == parkId) {
+				System.out.println("Name\t\t" + i.getName());
+				System.out.println("Location\t" + i.getLocation());
+				System.out.println("Area\t\t" + i.getArea());
+				System.out.println("Annual visitors\t" + i.getVisitors());
+				System.out.println(i.getDescription());
+			}
+		}
+	}
+	
 	private Park mapRowToPark(SqlRowSet results) {
 		Park thisPark = new Park();
 		thisPark.setParkId(results.getLong("park_id"));

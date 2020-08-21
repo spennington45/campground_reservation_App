@@ -24,20 +24,19 @@ public class JdcbSiteDAO implements SiteDAO{
 		ArrayList<Site> sites = new ArrayList<>();
 		String sqlSiteAvail = "SELECT s.site_id, s.campground_id, s.site_number, s.max_occupancy, s.accessible, s.max_rv_length, s.utilities, c.daily_fee "
 				+ "FROM site s JOIN reservation r ON r.site_id = s.site_id JOIN campground c ON c.campground_id = s.campground_id "
-				+ "WHERE s.site_id NOT IN (SELECT r.site_id FROM reservation "
-				+ "WHERE (r.to_date BETWEEN ? AND ?) OR (r.from_date BETWEEN ? AND ?) "
-				+ "OR (r.to_date < ? AND r.from_date > ?)) AND s.campground_id = ? GROUP BY s.site_id,s.campground_id, c.daily_fee LIMIT 5";
+				+ "WHERE NOT ((r.to_date BETWEEN ? AND ?) OR (r.from_date BETWEEN ? AND ?) "
+				+ "OR (r.to_date < ? AND r.from_date > ?)) AND s.campground_id = ? GROUP BY r.site_id ORDER BY COUNT(r.site_id) DESC LIMIT 5";
 		SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlSiteAvail, from, to, from, to, from, to, campId);
 
 
 		while (sqlRowSet.next()) {
-			Site site = addRowToSite(sqlRowSet);
+			Site site = addRowToSite(sqlRowSet, to, from);
 			sites.add(site);
 		}	
 		return sites;
 	}
 
-	private Site addRowToSite(SqlRowSet sqlRowSet) {
+	private Site addRowToSite(SqlRowSet sqlRowSet, LocalDate to, LocalDate from) {
 		Site newSite = new Site();
 		newSite.setAvailable(sqlRowSet.getBoolean("accessible"));
 		newSite.setCampgroundId(sqlRowSet.getLong("campground_id"));
@@ -47,6 +46,8 @@ public class JdcbSiteDAO implements SiteDAO{
 		newSite.setSiteNum(sqlRowSet.getLong("site_number"));
 		newSite.setSiteId(sqlRowSet.getLong("site_id"));
 		newSite.setUtilities(sqlRowSet.getBoolean("utilities"));
+		int totalDays = to.compareTo(from);
+		newSite.setTotalDays(totalDays);
 		return newSite;
 	}
 	

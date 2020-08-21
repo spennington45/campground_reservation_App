@@ -13,7 +13,8 @@ public class Site {
 	private long maxRVLength;
 	private boolean utilities;
 	private BigDecimal dailyFee;
-
+	private BigDecimal total;
+	private int totalDays;
 	
 	
 	//Getters and Setters
@@ -65,10 +66,26 @@ public class Site {
 	public void setDailyFee(BigDecimal dailyFee) {
 		this.dailyFee = dailyFee.setScale(2, RoundingMode.HALF_UP);
 	}
+	public BigDecimal getTotal() {
+		return this.total;
+	}
+	public int getTotalDays() {
+		return totalDays;
+	}
+	public void setTotalDays(int totalDays) {
+		this.totalDays = totalDays;
+		this.total = this.dailyFee.multiply(new BigDecimal(totalDays));
+	}
+
+	
 	@Override
 	public String toString() {
-		return "Site umber " + siteNum + ", max occupancy " + maxOccupancy 
-				+ ", max RV Length " + maxRVLength + ", utilities " + utilities + ", daily fee " + dailyFee;
+		String yesNo = "no";
+		if (utilities) {
+			yesNo = "yes";
+		} 
+		return "Site number " + siteNum + ", max occupancy " + maxOccupancy 
+				+ ", max RV Length " + maxRVLength + ", utilities " + yesNo + ", total fee $" + total;
 	}
 	
 	
