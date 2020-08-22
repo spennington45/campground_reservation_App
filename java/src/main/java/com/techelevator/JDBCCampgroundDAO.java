@@ -45,7 +45,7 @@ public class JDBCCampgroundDAO implements CampgroundDAO {
 		List<Campground> campgrounds = getCampgroundByParkId(id);
 		List<String> names = new ArrayList <String>();
 		for (Campground i : campgrounds) {
-			names.add(i.getName());
+			names.add(i.toString());
 		} 
 		return names;
 	}
@@ -54,7 +54,7 @@ public class JDBCCampgroundDAO implements CampgroundDAO {
 		List<Campground> campgrounds = searchAvailableCampgroundByPark(id, from, to);
 		List<String> names = new ArrayList <String>();
 		for (Campground i : campgrounds) {
-			names.add(i.getName());
+			names.add(i.toString());
 		} 		
 		names.add("Back");
 		return names;

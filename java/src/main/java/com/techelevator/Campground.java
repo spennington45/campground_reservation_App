@@ -48,5 +48,9 @@ public class Campground {
 	public void setFee(BigDecimal fee) {
 		this.fee = fee.setScale(2, RoundingMode.HALF_UP);
 	}
-
+	@Override
+	public String toString() {
+		return name + ", open from month " + openFrom + " to month " + openTo + ", daily fee " + fee;
+	}
+	
 }
