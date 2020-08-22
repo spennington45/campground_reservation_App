@@ -14,7 +14,8 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
-import com.techelevator.JdcbSiteDAO;
+import com.techelevator.model.Site;
+import com.techelevator.model.jdbc.JdcbSiteDAO;
 
 public class JdbcSiteDAOTest {
 	private static SingleConnectionDataSource dataSource;

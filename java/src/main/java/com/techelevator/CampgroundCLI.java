@@ -12,6 +12,11 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import com.techelevator.model.Site;
+import com.techelevator.model.jdbc.JDBCCampgroundDAO;
+import com.techelevator.model.jdbc.JDBCParkDAO;
+import com.techelevator.model.jdbc.JdbcReservationsDAO;
+import com.techelevator.model.jdbc.JdcbSiteDAO;
 import com.techelevator.view.Menu;
 
 public class CampgroundCLI {
@@ -89,16 +94,20 @@ public class CampgroundCLI {
 			campgroundMenu(parkId);
 		} else {
 			String campgroundChoice = (String) menu.getChoiceFromOptions(AVAILABLE_CAMPGROUNDS);
-			String [] temp = campgroundChoice.split(" ID: ");
-			System.out.println(temp[0]);
-			String campgroundId = "SELECT campground_id FROM campground "
-					+ "WHERE campground.name = ?";
-			SqlRowSet results = jdbcTemplate.queryForRowSet(campgroundId, temp[0]);
-			long id = 0;
-			while (results.next()) {
-				id = results.getLong("campground_id");
+			if (!campgroundChoice.equals("Back")) {
+				String [] temp = campgroundChoice.split(" ID: ");
+				System.out.println(temp[0]);
+				String campgroundId = "SELECT campground_id FROM campground "
+						+ "WHERE campground.name = ?";
+				SqlRowSet results = jdbcTemplate.queryForRowSet(campgroundId, temp[0]);
+				long id = 0;
+				while (results.next()) {
+					id = results.getLong("campground_id");
+				}
+				campsiteMenu(id);
+			} else {
+				campgroundMenu(parkId);
 			}
-			campsiteMenu(id);
 		}
 	}
 	
@@ -150,7 +159,7 @@ public class CampgroundCLI {
 				System.out.println("No avalable campsites for the dates " + from + " to " + to);
 			}
 		} catch (Exception e) {
-			System.out.println("Invaled date please enter a different date");
+			System.out.println("Invalid date please enter a different date");
 			System.out.println();
 			campsiteMenu(campId);
 		}

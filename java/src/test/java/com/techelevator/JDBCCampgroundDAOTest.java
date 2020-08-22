@@ -14,6 +14,9 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import com.techelevator.model.Campground;
+import com.techelevator.model.jdbc.JDBCCampgroundDAO;
+
 public class JDBCCampgroundDAOTest {
 	private static SingleConnectionDataSource dataSource;
 	private JDBCCampgroundDAO campDao;

@@ -1,4 +1,4 @@
-package com.techelevator;
+package com.techelevator.model.jdbc;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,6 +8,9 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+
+import com.techelevator.model.Campground;
+import com.techelevator.model.CampgroundDAO;
 
 public class JDBCCampgroundDAO implements CampgroundDAO {
 

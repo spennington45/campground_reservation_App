@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import com.techelevator.model.jdbc.JdbcReservationsDAO;
+
 public class JdbcReservationDAOtest {
 
 	private static SingleConnectionDataSource dataSource;

@@ -14,6 +14,9 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import com.techelevator.model.Park;
+import com.techelevator.model.jdbc.JDBCParkDAO;
+
 public class JdbcParkDAOTest {
 
 	private static SingleConnectionDataSource dataSource;

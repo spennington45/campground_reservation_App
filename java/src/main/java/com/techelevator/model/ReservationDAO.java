@@ -1,4 +1,4 @@
-package com.techelevator;
+package com.techelevator.model;
 
 import java.time.LocalDate;
 import java.util.List;
