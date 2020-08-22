@@ -52,9 +52,13 @@ public class Reservation {
 	public void setCreateDate(LocalDate createDate) {
 		this.createDate = createDate;
 	}
+	public int totalDays() {
+		int totalDays = toDate.compareTo(fromDate);
+		return totalDays;
+	}
 	@Override
 	public String toString() {
-		return "Reservation Id = " + reservationId + ", siteId = " + siteId + ", name = " + name + ", from = "
+		return "Reservation Id = " + reservationId + ", site = " + siteId + ", name = " + name + ", from = "
 				+ fromDate + ", to = " + toDate + ", reserved on = " + createDate;
 	}
 	 

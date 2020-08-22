@@ -41,9 +41,10 @@ public class JdbcReservationsDAO implements ReservationDAO{
 	}
 	
 	@Override
-	public void bookReservation(long siteId, LocalDate from, LocalDate to, String name) {
+	public void bookReservation(long siteId, LocalDate to, LocalDate from, String name) {
 		String bookRes = "INSERT INTO reservation (site_id, name, from_date, to_date) VALUES (?, ?, ?, ?)";
-		jdbcTemplate.update(bookRes, siteId, name, from, to);
+		jdbcTemplate.update(bookRes, siteId, name, from, to);		
+
 	}
 
 	@Override
