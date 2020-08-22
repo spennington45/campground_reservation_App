@@ -80,7 +80,6 @@ public class JDBCCampgroundDAOTest {
 	public void get_camp_by_parkId() {
 		List<Campground> test = campDao.getCampgroundByParkId(parkIdTest);
 		String testInfo = test.get(0).toString();
-		System.out.println(testInfo);
 		assertEquals("Camp Camp ID: "+campIdTest+", open from month 1 to month 12, daily fee 22.00", testInfo);
 	}
 
