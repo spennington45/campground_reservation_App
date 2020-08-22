@@ -80,14 +80,15 @@ public class JDBCCampgroundDAOTest {
 	public void get_camp_by_parkId() {
 		List<Campground> test = campDao.getCampgroundByParkId(parkIdTest);
 		String testInfo = test.get(0).toString();
-		assertEquals("Camp Camp, open from month 1 to month 12, daily fee 22.00", testInfo);
+		System.out.println(testInfo);
+		assertEquals("Camp Camp ID: "+campIdTest+", open from month 1 to month 12, daily fee 22.00", testInfo);
 	}
 
 	@Test
 	public void search_available_camp_by_park() {
 		List<Campground> test = campDao.searchAvailableCampgroundByPark(parkIdTest, 1, 2);
 		String testInfo = test.get(0).toString();
-		assertEquals("Camp Camp, open from month 1 to month 12, daily fee 22.00", testInfo);
+		assertEquals("Camp Camp ID: "+campIdTest+", open from month 1 to month 12, daily fee 22.00", testInfo);
 	}
 	@Test
 	public void get_all_camp_names() {
@@ -101,6 +102,6 @@ public class JDBCCampgroundDAOTest {
 		List<String> test = campDao.getAllAvailableCampgroundNames(Long.parseLong("2"), 2, 3);
 		int size = test.size();
 		assertEquals(4, size);
-		assertEquals("Devil's Garden, open from month 1 to month 12, daily fee 25.00",test.get(0));
+		assertEquals("Devil's Garden ID: 4, open from month 1 to month 12, daily fee 25.00",test.get(0));
 	}
 }
