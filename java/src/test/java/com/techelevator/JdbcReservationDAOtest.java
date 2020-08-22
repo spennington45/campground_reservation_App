@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -19,12 +17,8 @@ public class JdbcReservationDAOtest {
 
 	private static SingleConnectionDataSource dataSource;
 	private JdbcReservationsDAO resDao;
-	private JdcbSiteDAO siteDao;
-	private JDBCCampgroundDAO campDao;
-	private JDBCParkDAO parkDao;
 	private String PName = "'Steve and Tim Park'";
 	private String PLocation = "'State'";
-	private LocalDate estDate = LocalDate.of(1987,01,07);
 	private long PArea = 999999;
 	private long PVisitors = 9999999;
 	private String PDescription = "'This description is only a test'";
@@ -62,9 +56,6 @@ public class JdbcReservationDAOtest {
 					+ "VALUES ("+ PName +", "+PLocation+", '1987-01-07', "+PArea+", "+PVisitors+", "+PDescription+") RETURNING park_id", Long.class);			
 		campIdTest = jdbcTemplate.queryForObject("INSERT INTO campground (park_id, name, open_from_mm, open_to_mm, daily_fee) VALUES ("+parkIdTest+", 'Camp Camp', '01', '12', '$22.00') RETURNING campground_id", Long.class);
 		siteIdTest = jdbcTemplate.queryForObject("INSERT INTO site (campground_id, site_number, max_occupancy, accessible, max_rv_length, utilities) VALUES ("+campIdTest+", 999, 3, true, 0, true) RETURNING site_id",  Long.class);
-		parkDao = new JDBCParkDAO(dataSource);
-		campDao = new JDBCCampgroundDAO(dataSource);
-		siteDao = new JdcbSiteDAO(dataSource);
 		resDao = new JdbcReservationsDAO(dataSource);
 	}
 
@@ -72,7 +63,7 @@ public class JdbcReservationDAOtest {
 	public void tearDown() {
 		System.out.println("Ending test");
 		try {
-			this.dataSource.getConnection().rollback();
+			dataSource.getConnection().rollback();
 		} catch (SQLException e) {
 			System.out.println("Database connection problems");
 		}

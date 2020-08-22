@@ -1,10 +1,10 @@
 package com.techelevator;
 
-import java.time.DateTimeException;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.IntStream;
+
 
 import javax.sql.DataSource;
 
@@ -154,22 +154,6 @@ public class CampgroundCLI {
 			System.out.println();
 			campsiteMenu(campId);
 		}
-	}
-	
-	public LocalDate getDate() {
-		LocalDate date = null;
-		try (Scanner scanner = new Scanner(System.in)) {
-			String test = scanner.nextLine();
-			if (!test.equals("q") || !test.equals("Q")) {
-				date = LocalDate.parse(test);
-			} else {
-				run();
-			}
-		} catch (Exception e) {
-			System.out.println("Invaled date please enter a different date or press q to quit");
-			getDate();
-		}
-		return date;
 	}
 	
 	public void seeAllCampgrounds(long parkId) {
