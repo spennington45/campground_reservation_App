@@ -2,7 +2,7 @@ package com.techelevator;
 
 import static org.junit.Assert.*;
 
-import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -14,10 +14,9 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
-import com.techelevator.JdcbSiteDAO;
-
-public class JdbcSiteDAOTest {
+public class JDBCCampgroundDAOTest {
 	private static SingleConnectionDataSource dataSource;
+	private JdbcReservationsDAO resDao;
 	private JdcbSiteDAO siteDao;
 	private JDBCCampgroundDAO campDao;
 	private JDBCParkDAO parkDao;
@@ -30,10 +29,12 @@ public class JdbcSiteDAOTest {
 	private long campIdTest;
 	private long siteIdTest;
 	private long parkIdTest;
+	private LocalDate from = LocalDate.of(2020, 10, 10);
+	private LocalDate to = LocalDate.of(2020, 10, 12);
 	
 	
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	public static void setUpBeforeClass(){
 		System.out.println("Starting test suite");
 		dataSource = new SingleConnectionDataSource();
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/campground");
@@ -46,7 +47,7 @@ public class JdbcSiteDAOTest {
 	}
 
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	public static void tearDownAfterClass(){
 		dataSource.destroy();
 		System.out.println("All tests are done");
 	}
@@ -62,21 +63,44 @@ public class JdbcSiteDAOTest {
 		parkDao = new JDBCParkDAO(dataSource);
 		campDao = new JDBCCampgroundDAO(dataSource);
 		siteDao = new JdcbSiteDAO(dataSource);
-	
+		resDao = new JdbcReservationsDAO(dataSource);
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		System.out.println("Ending test");
-		dataSource.getConnection().rollback();
+		try {
+			this.dataSource.getConnection().rollback();
+		} catch (SQLException e) {
+			System.out.println("Database connection problems");
+		}
 	}
 
 	@Test
-	public void List_all_available_sites() {
-		LocalDate to = LocalDate.of(2020, 10, 12);
-		LocalDate from = LocalDate.of(2020, 10, 10);
-		List<Site> availableSites = siteDao.getAvailableSites(1, to, from);
-		assertEquals(5, availableSites.size());
+	public void get_camp_by_parkId() {
+		List<Campground> test = campDao.getCampgroundByParkId(parkIdTest);
+		String testInfo = test.get(0).toString();
+		assertEquals("Camp Camp, open from month 1 to month 12, daily fee 22.00", testInfo);
 	}
 
+	@Test
+	public void search_available_camp_by_park() {
+		List<Campground> test = campDao.searchAvailableCampgroundByPark(parkIdTest, 1, 2);
+		String testInfo = test.get(0).toString();
+		assertEquals("Camp Camp, open from month 1 to month 12, daily fee 22.00", testInfo);
+	}
+	@Test
+	public void get_all_camp_names() {
+		List<String> test = campDao.getAllCampgroundNames(Long.parseLong("1"));
+		int size = test.size();
+		assertEquals(3, size);
+	}
+	
+	@Test
+	public void get_all_available_camp_names() {
+		List<String> test = campDao.getAllAvailableCampgroundNames(Long.parseLong("2"), 2, 3);
+		int size = test.size();
+		assertEquals(4, size);
+		assertEquals("Devil's Garden, open from month 1 to month 12, daily fee 25.00",test.get(0));
+	}
 }

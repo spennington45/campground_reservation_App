@@ -83,12 +83,12 @@ public class JdbcReservationDAOtest {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		String beforeRes = "SELECT COUNT (reservation_id) FROM reservation";
 		long resNumB = jdbcTemplate.queryForObject(beforeRes, Long.class);
-		System.out.println(resNumB);
 		resDao.bookReservation(siteIdTest, from, to, "Beyonce Knowles");
-		String test = "SELECT reservation_id FROM reservation WHERE name = 'Beyonce Knowles'";
+		String test = "SELECT name FROM reservation WHERE name = 'Beyonce Knowles'";
 		String afterRes = "SELECT COUNT (reservation_id) FROM reservation";
-		long resNumA = jdbcTemplate.queryForObject(beforeRes, Long.class);
-		System.out.println(resNumA);
+		long resNumA = jdbcTemplate.queryForObject(afterRes, Long.class);
+		String beyonce = jdbcTemplate.queryForObject(test, String.class);
+		assertEquals("Beyonce Knowles", beyonce);
 		assertEquals(resNumB+1L, resNumA);
 	}
 
