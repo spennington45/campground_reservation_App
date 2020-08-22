@@ -89,9 +89,11 @@ public class CampgroundCLI {
 			campgroundMenu(parkId);
 		} else {
 			String campgroundChoice = (String) menu.getChoiceFromOptions(AVAILABLE_CAMPGROUNDS);
+			String [] temp = campgroundChoice.split(" ID: ");
+			System.out.println(temp[0]);
 			String campgroundId = "SELECT campground_id FROM campground "
 					+ "WHERE campground.name = ?";
-			SqlRowSet results = jdbcTemplate.queryForRowSet(campgroundId, campgroundChoice);
+			SqlRowSet results = jdbcTemplate.queryForRowSet(campgroundId, temp[0]);
 			long id = 0;
 			while (results.next()) {
 				id = results.getLong("campground_id");

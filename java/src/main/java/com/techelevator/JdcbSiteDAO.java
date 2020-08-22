@@ -25,7 +25,9 @@ public class JdcbSiteDAO implements SiteDAO{
 	
 	@Override
 	public List<Site> getAvailableSites(long campId, LocalDate from, LocalDate to) {
-
+		System.out.println(from);
+		System.out.println(to);
+		System.out.println(campId);
 		ArrayList<Site> sites = new ArrayList<>();
 //		Set <LocalDate> dates = new HashSet<LocalDate>();
 //		dates.add(from);
@@ -50,6 +52,7 @@ public class JdcbSiteDAO implements SiteDAO{
 
 
 		while (sqlRowSet.next()) {
+			System.out.println("THIS IS A TEST");
 			Site site = addRowToSite(sqlRowSet, to, from);
 			sites.add(site);
 		}	
