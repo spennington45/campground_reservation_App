@@ -118,7 +118,7 @@ public class CampgroundCLI {
 			System.out.println("Invaled date please enter a different date");
 			campsiteMenu(campId);
 		}
-		List<Site> sites = site.getAvailableSites(campId, to, from);
+		List<Site> sites = site.getAvailableSites(campId, from, to);
 		if (sites.size() > 0) {
 			AVALIABLE_SITES = new String [6]; 
 			for (int i = 0; i < sites.size(); i++) {

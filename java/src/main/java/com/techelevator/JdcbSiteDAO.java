@@ -24,7 +24,7 @@ public class JdcbSiteDAO implements SiteDAO{
 	
 	
 	@Override
-	public List<Site> getAvailableSites(long campId, LocalDate to, LocalDate from) {
+	public List<Site> getAvailableSites(long campId, LocalDate from, LocalDate to) {
 
 		ArrayList<Site> sites = new ArrayList<>();
 //		Set <LocalDate> dates = new HashSet<LocalDate>();
@@ -43,9 +43,10 @@ public class JdcbSiteDAO implements SiteDAO{
 			
 		String sqlSiteAvail = "SELECT s.site_id, s.campground_id, s.site_number, s.max_occupancy, s.accessible, s.max_rv_length, s.utilities, c.daily_fee " + 
 				"FROM site s LEFT OUTER JOIN reservation r ON r.site_id = s.site_id JOIN campground c ON c.campground_id = s.campground_id " + 
-				"WHERE NOT ((r.to_date BETWEEN ? AND ?) OR (r.from_date BETWEEN ? AND ?) " + 
-				"OR (r.to_date < ? AND r.from_date > ?)) AND s.campground_id = ? OR r.reservation_id IS NULL GROUP BY s.site_id, r.site_id, c.daily_fee ORDER BY COUNT(r.reservation_id) DESC LIMIT 5";
-		SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlSiteAvail, from, to, from, to, from, to, campId);
+				"WHERE  s.campground_id = ? AND s.site_id NOT IN (SELECT s.site_id FROM reservation r JOIN site s ON s.site_id = r.site_id " + 
+				"WHERE s.campground_id = ? AND ((? <= r.to_date AND ? >= r.from_date) OR (? <= r.to_date AND ? >= r.from_date) OR (? <= r.from_date AND ? >= r.to_date))) " + 
+				"GROUP BY s.site_id, c.daily_fee ORDER BY COUNT(r.reservation_id) DESC LIMIT 5";
+		SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlSiteAvail, campId, campId, to, to, from, from, from, to);
 
 
 		while (sqlRowSet.next()) {
