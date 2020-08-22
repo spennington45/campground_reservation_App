@@ -16,22 +16,14 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 public class JDBCCampgroundDAOTest {
 	private static SingleConnectionDataSource dataSource;
-	private JdbcReservationsDAO resDao;
-	private JdcbSiteDAO siteDao;
 	private JDBCCampgroundDAO campDao;
-	private JDBCParkDAO parkDao;
 	private String PName = "'Steve and Tim Park'";
 	private String PLocation = "'State'";
-	private LocalDate estDate = LocalDate.of(1987,01,07);
 	private long PArea = 999999;
 	private long PVisitors = 9999999;
 	private String PDescription = "'This description is only a test'";
 	private long campIdTest;
-	private long siteIdTest;
-	private long parkIdTest;
-	private LocalDate from = LocalDate.of(2020, 10, 10);
-	private LocalDate to = LocalDate.of(2020, 10, 12);
-	
+	private long parkIdTest;	
 	
 	@BeforeClass
 	public static void setUpBeforeClass(){
@@ -59,11 +51,7 @@ public class JDBCCampgroundDAOTest {
 		parkIdTest = jdbcTemplate.queryForObject(" INSERT INTO park (name, location, establish_date, area, visitors, description) "
 					+ "VALUES ("+ PName +", "+PLocation+", '1987-01-07', "+PArea+", "+PVisitors+", "+PDescription+") RETURNING park_id", Long.class);			
 		campIdTest = jdbcTemplate.queryForObject("INSERT INTO campground (park_id, name, open_from_mm, open_to_mm, daily_fee) VALUES ("+parkIdTest+", 'Camp Camp', '01', '12', '$22.00') RETURNING campground_id", Long.class);
-		siteIdTest = jdbcTemplate.queryForObject("INSERT INTO site (campground_id, site_number, max_occupancy, accessible, max_rv_length, utilities) VALUES ("+campIdTest+", 999, 3, true, 0, true) RETURNING site_id",  Long.class);
-		parkDao = new JDBCParkDAO(dataSource);
 		campDao = new JDBCCampgroundDAO(dataSource);
-		siteDao = new JdcbSiteDAO(dataSource);
-		resDao = new JdbcReservationsDAO(dataSource);
 	}
 
 	@After
@@ -80,7 +68,6 @@ public class JDBCCampgroundDAOTest {
 	public void get_camp_by_parkId() {
 		List<Campground> test = campDao.getCampgroundByParkId(parkIdTest);
 		String testInfo = test.get(0).toString();
-		System.out.println(testInfo);
 		assertEquals("Camp Camp ID: "+campIdTest+", open from month 1 to month 12, daily fee 22.00", testInfo);
 	}
 

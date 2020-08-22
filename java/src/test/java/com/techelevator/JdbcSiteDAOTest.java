@@ -24,8 +24,6 @@ public class JdbcSiteDAOTest {
 	private long PArea = 999999;
 	private long PVisitors = 9999999;
 	private String PDescription = "'This description is only a test'";
-	private long campIdTest;
-	private long siteIdTest;
 	private long parkIdTest;
 	
 	
@@ -54,8 +52,6 @@ public class JdbcSiteDAOTest {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		parkIdTest = jdbcTemplate.queryForObject(" INSERT INTO park (name, location, establish_date, area, visitors, description) "
 					+ "VALUES ("+ PName +", "+PLocation+", '1987-01-07', "+PArea+", "+PVisitors+", "+PDescription+") RETURNING park_id", Long.class);			
-		campIdTest = jdbcTemplate.queryForObject("INSERT INTO campground (park_id, name, open_from_mm, open_to_mm, daily_fee) VALUES ("+parkIdTest+", 'Camp Camp', '01', '12', '$22.00') RETURNING campground_id", Long.class);
-		siteIdTest = jdbcTemplate.queryForObject("INSERT INTO site (campground_id, site_number, max_occupancy, accessible, max_rv_length, utilities) VALUES ("+campIdTest+", 999, 3, true, 0, true) RETURNING site_id",  Long.class);
 		siteDao = new JdcbSiteDAO(dataSource);
 	
 	}
