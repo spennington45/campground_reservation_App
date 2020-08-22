@@ -114,42 +114,43 @@ public class CampgroundCLI {
 		try {
 			from = LocalDate.parse(startDate);
 			to = LocalDate.parse(endDate);
-		} catch (Exception e) {
-			System.out.println("Invaled date please enter a different date");
-			campsiteMenu(campId);
-		}
-		List<Site> sites = site.getAvailableSites(campId, from, to);
-		if (sites.size() > 0) {
-			AVALIABLE_SITES = new String [6]; 
-			for (int i = 0; i < sites.size(); i++) {
-				if (!sites.get(i).toString().equals(null)) {
-					AVALIABLE_SITES[i] = sites.get(i).toString();					
-				}
-			}
-			AVALIABLE_SITES[5] = "Back";
-			System.out.println("Please select an avaliable site to make a reservation.");
-			String choice = (String) menu.getChoiceFromOptions(AVALIABLE_SITES);
-			int index = 0;
-			if (!choice.equals("Back")) {
-				for (int i = 0; i < AVALIABLE_SITES.length; i++) {
-					if (choice.equals(AVALIABLE_SITES[i])) {
-						index = i;
+			List<Site> sites = site.getAvailableSites(campId, from, to);
+			if (sites.size() > 0) {
+				AVALIABLE_SITES = new String [6]; 
+				for (int i = 0; i < sites.size(); i++) {
+					if (!sites.get(i).toString().equals(null)) {
+						AVALIABLE_SITES[i] = sites.get(i).toString();					
 					}
 				}
-				long siteId = sites.get(index).getSiteId();
-				System.out.print("Please enter a name for the reservation >>> ");
-				String name = scanner.nextLine();
-				reservation.bookReservation(siteId, to, from, name);
-				String res = "SELECT reservation_id FROM reservation ORDER BY reservation_id DESC LIMIT 1";
-				SqlRowSet sql = jdbcTemplate.queryForRowSet(res);
-				long reservationId = 0;
-				while (sql.next()) {
-					reservationId = sql.getLong("reservation_id");
-				}
-				reservation.confirmationId(reservationId);
-			}			
-		} else {
-			System.out.println("No avalable campsites for the dates " + from + " to " + to);
+				AVALIABLE_SITES[5] = "Back";
+				System.out.println("Please select an avaliable site to make a reservation.");
+				String choice = (String) menu.getChoiceFromOptions(AVALIABLE_SITES);
+				int index = 0;
+				if (!choice.equals("Back")) {
+					for (int i = 0; i < AVALIABLE_SITES.length; i++) {
+						if (choice.equals(AVALIABLE_SITES[i])) {
+							index = i;
+						}
+					}
+					long siteId = sites.get(index).getSiteId();
+					System.out.print("Please enter a name for the reservation >>> ");
+					String name = scanner.nextLine();
+					reservation.bookReservation(siteId, to, from, name);
+					String res = "SELECT reservation_id FROM reservation ORDER BY reservation_id DESC LIMIT 1";
+					SqlRowSet sql = jdbcTemplate.queryForRowSet(res);
+					long reservationId = 0;
+					while (sql.next()) {
+						reservationId = sql.getLong("reservation_id");
+					}
+					reservation.confirmationId(reservationId);
+				}			
+			} else {
+				System.out.println("No avalable campsites for the dates " + from + " to " + to);
+			}
+		} catch (Exception e) {
+			System.out.println("Invaled date please enter a different date");
+			System.out.println();
+			campsiteMenu(campId);
 		}
 	}
 	

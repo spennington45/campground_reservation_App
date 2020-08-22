@@ -43,11 +43,25 @@ public class JDBCParkDAO implements ParkDAO {
 		List<Park> parks = getAllParks();
 		for (Park i : parks) {
 			if (i.getParkId() == parkId) {
+				System.out.println("ID\t\t" + i.getParkId());
 				System.out.println("Name\t\t" + i.getName());
 				System.out.println("Location\t" + i.getLocation());
 				System.out.println("Area\t\t" + i.getArea());
 				System.out.println("Annual visitors\t" + i.getVisitors());
-				System.out.println(i.getDescription());
+				String [] tempArray = i.getDescription().split(" ");
+				for (int j = 0; j < tempArray.length; j++) {
+					if (tempArray.length - j > 10) {
+						for (int k = j; k <= j+10; k++) {
+							System.out.print(tempArray[k] + " ");
+						}
+						System.out.println();
+					}
+					else {
+						for (int k = j; k < tempArray.length - j; k++) {
+							System.out.print(tempArray[k] + " ");
+						}
+					}
+				}
 			}
 		}
 	}

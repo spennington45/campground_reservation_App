@@ -50,7 +50,7 @@ public class Campground {
 	}
 	@Override
 	public String toString() {
-		return name + ", open from month " + openFrom + " to month " + openTo + ", daily fee " + fee;
+		return name + " ID: "+ campgroundId + ", open from month " + openFrom + " to month " + openTo + ", daily fee " + fee;
 	}
 	
 }

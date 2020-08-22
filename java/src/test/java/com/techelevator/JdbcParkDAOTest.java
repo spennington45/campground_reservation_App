@@ -57,16 +57,24 @@ public class JdbcParkDAOTest {
 	@Test
 	public void getAllParksTest() {
 		List <Park> testPark = new ArrayList <>();
+		List <Park> testPark2 = new ArrayList <>();
 		testPark = park.getAllParks();
-		assertEquals(3, testPark.size());
+		String sqlInsert = "INSERT INTO park (name, location, establish_date, area, visitors, description) VALUES  ('Test Park', 'Here', '1919-02-26', 1, 0, 'This is a fake park')";
+		jdbcTemplate.update(sqlInsert);
+		testPark2 = park.getAllParks();
+		assertEquals(testPark.size() + 1, testPark2.size());
 	}
 	
 	@Test
 	public void getParkNamesTest() {
 		List <String> names = new ArrayList <>();
+		List <String> names2 = new ArrayList <>();
 		names = park.getParkNames();
-		assertEquals(4, names.size());
-		assertEquals(true, names.contains("Acadia"));
+		String sqlInsert = "INSERT INTO park (name, location, establish_date, area, visitors, description) VALUES  ('Test Park', 'Here', '1919-02-26', 1, 0, 'This is a fake park')";
+		jdbcTemplate.update(sqlInsert);
+		names2 = park.getParkNames();
+		assertEquals(names.size() + 1, names2.size());
+		assertEquals(true, names2.contains("Test Park"));
 	}
 
 }
