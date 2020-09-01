@@ -53,18 +53,12 @@ public class JDBCParkDAO implements ParkDAO {
 				System.out.println("Annual visitors\t" + i.getVisitors());
 				String [] tempArray = i.getDescription().split(" ");
 				for (int j = 0; j < tempArray.length; j++) {
-					if (tempArray.length - j > 10) {
-						for (int k = j; k <= j+10; k++) {
-							System.out.print(tempArray[k] + " ");
-						}
+					System.out.print(tempArray[j] + " ");
+					if (j % 10 == 0 && j != 0) {
 						System.out.println();
 					}
-					else {
-						for (int k = j; k < tempArray.length - j; k++) {
-							System.out.print(tempArray[k] + " ");
-						}
-					}
 				}
+				System.out.println();
 			}
 		}
 	}
